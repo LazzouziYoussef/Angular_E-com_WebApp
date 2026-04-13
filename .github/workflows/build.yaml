@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: CI/CD to GitHub Pages
 
 on:
   push:
@@ -6,24 +6,30 @@ on:
       - master
 
 jobs:
-  deploy:
+  build-test-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "npm"
 
-      - run: npm ci
+      - name: Install
+        run: npm ci
 
-      - run: npx ng build --base-href=/Angular_E-com_WebApp/
+      - name: Test
+        run: npx ng test --watch=false --browsers=ChromeHeadless
 
-      - run: ls dist/
+      - name: Build
+        run: npx ng build --base-href=/Angular_E-com_WebApp/
 
-      - uses: peaceiris/actions-gh-pages@v4
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist/Angular_E-com_WebApp/browser

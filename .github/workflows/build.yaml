@@ -8,16 +8,20 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "25"
+          node-version: "22"
 
       - run: npm ci
 
       - run: npx ng build --base-href=/Angular_E-com_WebApp/
+
+      - run: ls dist/
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
